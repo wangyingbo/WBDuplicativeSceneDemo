@@ -17,6 +17,7 @@
 		A463ACDC285A275E00630E21 /* WBDuplicativeSceneDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A463ACDB285A275E00630E21 /* WBDuplicativeSceneDemoTests.m */; };
 		A463ACE6285A275E00630E21 /* WBDuplicativeSceneDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = A463ACE5285A275E00630E21 /* WBDuplicativeSceneDemoUITests.m */; };
 		A463ACE8285A275E00630E21 /* WBDuplicativeSceneDemoUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A463ACE7285A275E00630E21 /* WBDuplicativeSceneDemoUITestsLaunchTests.m */; };
+		A463ACF6285A286F00630E21 /* UIView+WBVScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A463ACF5285A286F00630E21 /* UIView+WBVScene.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,8 @@
 		A463ACE1285A275E00630E21 /* WBDuplicativeSceneDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WBDuplicativeSceneDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A463ACE5285A275E00630E21 /* WBDuplicativeSceneDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WBDuplicativeSceneDemoUITests.m; sourceTree = "<group>"; };
 		A463ACE7285A275E00630E21 /* WBDuplicativeSceneDemoUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WBDuplicativeSceneDemoUITestsLaunchTests.m; sourceTree = "<group>"; };
+		A463ACF4285A286F00630E21 /* UIView+WBVScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+WBVScene.h"; sourceTree = "<group>"; };
+		A463ACF5285A286F00630E21 /* UIView+WBVScene.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+WBVScene.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +113,8 @@
 				A463ACC3285A275C00630E21 /* SceneDelegate.m */,
 				A463ACC5285A275C00630E21 /* ViewController.h */,
 				A463ACC6285A275C00630E21 /* ViewController.m */,
+				A463ACF4285A286F00630E21 /* UIView+WBVScene.h */,
+				A463ACF5285A286F00630E21 /* UIView+WBVScene.m */,
 				A463ACC8285A275C00630E21 /* Main.storyboard */,
 				A463ACCB285A275E00630E21 /* Assets.xcassets */,
 				A463ACCD285A275E00630E21 /* LaunchScreen.storyboard */,
@@ -269,6 +274,7 @@
 				A463ACC7285A275C00630E21 /* ViewController.m in Sources */,
 				A463ACC1285A275C00630E21 /* AppDelegate.m in Sources */,
 				A463ACD2285A275E00630E21 /* main.m in Sources */,
+				A463ACF6285A286F00630E21 /* UIView+WBVScene.m in Sources */,
 				A463ACC4285A275C00630E21 /* SceneDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
