@@ -76,6 +76,7 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
     }
 }
 
+/// 从大到小排序
 - (void)_sortArrayDescending {
     [self.scenesMutArray sortedArrayUsingComparator:^NSComparisonResult(WBVDuplicativeScene<WBVDuplicativeSceneProtocol>   * _Nonnull obj1, WBVDuplicativeScene<WBVDuplicativeSceneProtocol>  * _Nonnull obj2) {
         if (obj1.priority < obj2.priority) {
