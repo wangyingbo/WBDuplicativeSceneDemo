@@ -150,9 +150,17 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
     currentSceneObject.numberValue = [NSNumber numberWithBool:hidden];
     [self.hiddenOperation wbv_addSceneObject:currentSceneObject];
     
+    [self _setPriorityHighScene];
+}
+
+- (void)_setPriorityHighScene {
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *priorityHighSceneObject = [self.hiddenOperation wbv_priorityHighSceneObject];
-    if (priorityHighSceneObject) {
-        self.hidden = [priorityHighSceneObject.numberValue boolValue];
+    if (!priorityHighSceneObject) {
+        return;
+    }
+    BOOL _hidden = [priorityHighSceneObject.numberValue boolValue];
+    if (self.hidden ^ _hidden) {
+        self.hidden = _hidden;
     }
 }
 
@@ -163,6 +171,8 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *currentSceneObject = [[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> alloc] init];
     currentSceneObject.scene = reason;
     [self.hiddenOperation wbv_removeSceneObject:currentSceneObject];
+    
+    [self _setPriorityHighScene];
 }
 
 - (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)wbv_currentSceneObject {
