@@ -27,11 +27,11 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface WBOperationObject : NSObject
-- (void)wbv_addSceneObject:(WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)sceneObject;
-- (void)wbv_removeSceneObject:(WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)sceneObject;
-- (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)wbv_priorityHighSceneObject;
+- (void)wbv_addSceneObject:(NSObject<WBVDuplicativeSceneProtocol> *)sceneObject;
+- (void)wbv_removeSceneObject:(NSObject<WBVDuplicativeSceneProtocol> *)sceneObject;
+- (NSObject<WBVDuplicativeSceneProtocol> *)wbv_priorityHighSceneObject;
 - (NSUInteger)wbv_scenesCount;
-- (BOOL)wbv_containsSceneObject:(WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)sceneObject;
+- (BOOL)wbv_containsSceneObject:(NSObject<WBVDuplicativeSceneProtocol> *)sceneObject;
 - (void)wbv_removeAllSceneObjects;
 
 @end

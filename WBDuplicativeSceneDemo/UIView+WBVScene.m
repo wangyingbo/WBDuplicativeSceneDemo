@@ -26,8 +26,8 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
     return _scenesMutArray;
 }
 
-- (void)wbv_addSceneObject:(WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)sceneObject {
-    if (![sceneObject isKindOfClass:WBVDuplicativeScene.class]) {
+- (void)wbv_addSceneObject:(NSObject<WBVDuplicativeSceneProtocol> *)sceneObject {
+    if (![sceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
         return;
     }
     if (!self.scenesMutArray.count) {
@@ -37,7 +37,7 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
     __block NSInteger insertIndex = WBDuplicativeSceneInitialValue;
     __block NSInteger replaceIndex = WBDuplicativeSceneInitialValue;
     for (NSUInteger i = 0; i < self.scenesMutArray.count; i++) {
-        WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *object = [self.scenesMutArray objectAtIndex:i];
+        NSObject<WBVDuplicativeSceneProtocol> *object = [self.scenesMutArray objectAtIndex:i];
         if ([sceneObject.scene isEqualToString:object.scene] && replaceIndex == WBDuplicativeSceneInitialValue) {
             replaceIndex = i;
             break;
@@ -56,8 +56,8 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
     }
 }
 
-- (void)wbv_removeSceneObject:(WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)sceneObject {
-    if (![sceneObject isKindOfClass:WBVDuplicativeScene.class]) {
+- (void)wbv_removeSceneObject:(NSObject<WBVDuplicativeSceneProtocol> *)sceneObject {
+    if (![sceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
         return;
     }
     if (!self.scenesMutArray.count) {
@@ -65,7 +65,7 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
     }
     __block NSInteger removeIndex = WBDuplicativeSceneInitialValue;
     for (NSUInteger i = 0; i < self.scenesMutArray.count; i++) {
-        WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *object = [self.scenesMutArray objectAtIndex:i];
+        NSObject<WBVDuplicativeSceneProtocol> *object = [self.scenesMutArray objectAtIndex:i];
         if ([sceneObject.scene isEqualToString:object.scene] && removeIndex == WBDuplicativeSceneInitialValue) {
             removeIndex = i;
             break;
@@ -78,7 +78,7 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
 
 /// 从大到小排序
 - (void)_sortArrayDescending {
-    [self.scenesMutArray sortedArrayUsingComparator:^NSComparisonResult(WBVDuplicativeScene<WBVDuplicativeSceneProtocol>   * _Nonnull obj1, WBVDuplicativeScene<WBVDuplicativeSceneProtocol>  * _Nonnull obj2) {
+    [self.scenesMutArray sortedArrayUsingComparator:^NSComparisonResult(NSObject<WBVDuplicativeSceneProtocol> * _Nonnull obj1, NSObject<WBVDuplicativeSceneProtocol> * _Nonnull obj2) {
         if (obj1.priority < obj2.priority) {
             return NSOrderedDescending;
         }else if (obj1.priority == obj2.priority) {
@@ -89,7 +89,7 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
     }];
 }
 
-- (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)wbv_priorityHighSceneObject {
+- (NSObject<WBVDuplicativeSceneProtocol> *)wbv_priorityHighSceneObject {
     if (!self.scenesMutArray.count) {
         return nil;
     }
@@ -100,12 +100,12 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
     return [self.scenesMutArray count];
 }
 
-- (BOOL)wbv_containsSceneObject:(WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)sceneObject {
+- (BOOL)wbv_containsSceneObject:(NSObject<WBVDuplicativeSceneProtocol> *)sceneObject {
     if (!self.scenesMutArray.count) {
         return NO;
     }
     for (NSUInteger i = 0; i < self.scenesMutArray.count; i++) {
-        WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *object = [self.scenesMutArray objectAtIndex:i];
+        NSObject<WBVDuplicativeSceneProtocol> *object = [self.scenesMutArray objectAtIndex:i];
         if ([sceneObject.scene isEqualToString:object.scene]) {
             return YES;
         }
@@ -155,8 +155,11 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
 }
 
 - (void)_setPriorityHighScene {
-    WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *priorityHighSceneObject = [self.hiddenOperation wbv_priorityHighSceneObject];
-    if (!priorityHighSceneObject) {
+    WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *priorityHighSceneObject = (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)[self.hiddenOperation wbv_priorityHighSceneObject];
+    if (![priorityHighSceneObject isKindOfClass:[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> class]]) {
+        return;
+    }
+    if (![priorityHighSceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
         return;
     }
     BOOL _hidden = [priorityHighSceneObject.numberValue boolValue];
@@ -177,7 +180,14 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
 }
 
 - (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)wbv_currentSceneObject {
-    return [self.hiddenOperation wbv_priorityHighSceneObject];
+    WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *priorityHighSceneObject = (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)[self.hiddenOperation wbv_priorityHighSceneObject];
+    if (![priorityHighSceneObject isKindOfClass:[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> class]]) {
+        return nil;
+    }
+    if (![priorityHighSceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
+        return nil;
+    }
+    return priorityHighSceneObject;
 }
 
 - (void)wbv_removeAllHiddenReasons {
