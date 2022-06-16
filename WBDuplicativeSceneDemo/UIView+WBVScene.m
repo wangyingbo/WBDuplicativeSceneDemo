@@ -162,6 +162,9 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
     if (![priorityHighSceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
         return;
     }
+    if (![priorityHighSceneObject respondsToSelector:@selector(numberValue)]) {
+        return;
+    }
     BOOL _hidden = [priorityHighSceneObject.numberValue boolValue];
     if (self.hidden ^ _hidden) {
         self.hidden = _hidden;
