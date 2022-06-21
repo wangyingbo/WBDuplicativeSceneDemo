@@ -48,8 +48,11 @@ FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityLow;
 - (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason;
 - (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason priority:(NSUInteger)priority;
 - (void)wbv_removeHiddenReason:(NSString *)reason;
+/**当前权重最高的reason*/
 - (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)wbv_currentSceneObject;
 - (void)wbv_removeAllHiddenReasons;
+/**用来查看当前所有的reason和priority*/
+- (NSDictionary<NSString *,NSNumber *> *)wbv_allReasonsAndPriorities;
 - (BOOL)wbv_containsHiddenReason:(NSString *)reason;
 
 @end

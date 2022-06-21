@@ -208,6 +208,20 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     [self.hiddenOperation wbv_removeAllSceneObjects];
 }
 
+- (NSDictionary<NSString *,NSNumber *> *)wbv_allReasonsAndPriorities {
+    NSMutableDictionary *mutDict = [NSMutableDictionary dictionary];
+    NSArray<NSObject<WBVDuplicativeSceneProtocol> *> *sceneObjects = [self.hiddenOperation wbv_allSceneObjects];
+    if (!sceneObjects.count) {
+        return [mutDict copy];
+    }
+    for (NSObject<WBVDuplicativeSceneProtocol> *sceneObject in sceneObjects) {
+        if ([sceneObject scene]) {
+            [mutDict setObject:[NSNumber numberWithInteger:[sceneObject priority]] forKey:[sceneObject scene]];
+        }
+    }
+    return [mutDict copy];
+}
+
 - (BOOL)wbv_containsHiddenReason:(NSString *)reason {
     if (!reason) {
         return NO;
