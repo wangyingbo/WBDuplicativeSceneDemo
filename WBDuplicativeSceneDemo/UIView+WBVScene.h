@@ -36,6 +36,7 @@ FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityLow;
 - (NSObject<WBVDuplicativeSceneProtocol> *)wbv_currentHighestSceneObject;
 - (NSUInteger)wbv_scenesCount;
 - (BOOL)wbv_containsSceneObject:(NSObject<WBVDuplicativeSceneProtocol> *)sceneObject;
+- (NSArray<NSObject<WBVDuplicativeSceneProtocol> *> *)wbv_allSceneObjects;
 - (void)wbv_removeAllSceneObjects;
 
 @end

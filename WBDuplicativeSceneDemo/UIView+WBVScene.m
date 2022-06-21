@@ -117,6 +117,10 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     return NO;
 }
 
+- (NSArray<NSObject<WBVDuplicativeSceneProtocol> *> *)wbv_allSceneObjects {
+    return [self.scenesMutArray copy];
+}
+
 - (void)wbv_removeAllSceneObjects {
     [self.scenesMutArray removeAllObjects];
 }
