@@ -33,7 +33,7 @@ FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityLow;
 @interface WBOperationObject : NSObject
 - (void)wbv_addSceneObject:(NSObject<WBVDuplicativeSceneProtocol> *)sceneObject;
 - (void)wbv_removeSceneObject:(NSObject<WBVDuplicativeSceneProtocol> *)sceneObject;
-- (NSObject<WBVDuplicativeSceneProtocol> *)wbv_priorityHighSceneObject;
+- (NSObject<WBVDuplicativeSceneProtocol> *)wbv_currentHighestSceneObject;
 - (NSUInteger)wbv_scenesCount;
 - (BOOL)wbv_containsSceneObject:(NSObject<WBVDuplicativeSceneProtocol> *)sceneObject;
 - (void)wbv_removeAllSceneObjects;

@@ -93,7 +93,7 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     }];
 }
 
-- (NSObject<WBVDuplicativeSceneProtocol> *)wbv_priorityHighSceneObject {
+- (NSObject<WBVDuplicativeSceneProtocol> *)wbv_currentHighestSceneObject {
     if (!self.scenesMutArray.count) {
         return nil;
     }
@@ -162,17 +162,17 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 }
 
 - (void)_setPriorityHighScene {
-    WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *priorityHighSceneObject = (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)[self.hiddenOperation wbv_priorityHighSceneObject];
-    if (![priorityHighSceneObject isKindOfClass:[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> class]]) {
+    WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *highestPrioritySceneObject = (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)[self.hiddenOperation wbv_currentHighestSceneObject];
+    if (![highestPrioritySceneObject isKindOfClass:[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> class]]) {
         return;
     }
-    if (![priorityHighSceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
+    if (![highestPrioritySceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
         return;
     }
-    if (![priorityHighSceneObject respondsToSelector:@selector(numberValue)]) {
+    if (![highestPrioritySceneObject respondsToSelector:@selector(numberValue)]) {
         return;
     }
-    BOOL _hidden = [priorityHighSceneObject.numberValue boolValue];
+    BOOL _hidden = [highestPrioritySceneObject.numberValue boolValue];
     if (self.hidden ^ _hidden) {
         self.hidden = _hidden;
     }
@@ -190,14 +190,14 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 }
 
 - (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)wbv_currentSceneObject {
-    WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *priorityHighSceneObject = (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)[self.hiddenOperation wbv_priorityHighSceneObject];
-    if (![priorityHighSceneObject isKindOfClass:[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> class]]) {
+    WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *highestPrioritySceneObject = (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)[self.hiddenOperation wbv_currentHighestSceneObject];
+    if (![highestPrioritySceneObject isKindOfClass:[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> class]]) {
         return nil;
     }
-    if (![priorityHighSceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
+    if (![highestPrioritySceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
         return nil;
     }
-    return priorityHighSceneObject;
+    return highestPrioritySceneObject;
 }
 
 - (void)wbv_removeAllHiddenReasons {
