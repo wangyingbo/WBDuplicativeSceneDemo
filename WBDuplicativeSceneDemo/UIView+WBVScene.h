@@ -9,6 +9,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityHigh;
+FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityMedium;
+FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityLow;
+
 @protocol WBVDuplicativeSceneProtocol <NSObject>
 @required
 - (NSString *)scene;
@@ -37,6 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface UIView (WBVScene)
+/**
+ 默认priority值：WBDuplicativeScenePriorityMedium
+ */
+- (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason;
 - (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason priority:(NSUInteger)priority;
 - (void)wbv_removeHiddenReason:(NSString *)reason;
 - (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)wbv_currentSceneObject;

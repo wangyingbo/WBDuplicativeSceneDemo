@@ -9,6 +9,10 @@
 #import <objc/runtime.h>
 
 static NSInteger const WBDuplicativeSceneInitialValue = -1;
+NSUInteger const WBDuplicativeScenePriorityHigh = 750;
+NSUInteger const WBDuplicativeScenePriorityMedium = 500;
+NSUInteger const WBDuplicativeScenePriorityLow = 250;
+
 @implementation WBVDuplicativeScene
 
 @end
@@ -141,6 +145,9 @@ static NSInteger const WBDuplicativeSceneInitialValue = -1;
 }
 
 #pragma mark - public
+- (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason {
+    [self wbv_setHidden:hidden reason:reason priority:WBDuplicativeScenePriorityMedium];
+}
 - (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason priority:(NSUInteger)priority {
     if (!reason) {
         return;
