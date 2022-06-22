@@ -188,6 +188,9 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     }
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *currentSceneObject = [[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> alloc] init];
     currentSceneObject.scene = reason;
+    if (![self.hiddenOperation wbv_containsSceneObject:currentSceneObject]) {
+        return;
+    }
     [self.hiddenOperation wbv_removeSceneObject:currentSceneObject];
     
     [self _setPriorityHighScene];
