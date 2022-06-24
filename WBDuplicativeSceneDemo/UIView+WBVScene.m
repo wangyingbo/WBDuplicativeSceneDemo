@@ -139,6 +139,7 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 @implementation UIView (WBVScene)
 
 #pragma mark -Associated
+
 - (WBOperationObject *)hiddenOperation {
     WBOperationObject *object = objc_getAssociatedObject(self, _cmd);
     if (object && [object isKindOfClass:[WBOperationObject class]]) {
@@ -161,59 +162,67 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     objc_setAssociatedObject(self, @selector(oriHiddenBeforeOperation), oriHiddenBeforeOperation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-#pragma mark - public
-- (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason {
-    [self wbv_setHidden:hidden reason:reason priority:WBDuplicativeScenePriorityMedium];
-}
-- (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason priority:(NSUInteger)priority {
-    if (!reason) { return; }
+#pragma mark - universal methods
+
+/// 给operation添加操作的scene，并记录操作前的原始值
+/// @param operation 操作对象
+/// @param numberValue 需要操作的值
+/// @param reason 操作的场景
+/// @param priority 权重
+/// @param originNumberValue 保存原始值的对象
++ (BOOL)_operation:(WBOperationObject *)operation setNumberValue:(NSNumber *)numberValue reason:(NSString *)reason priority:(NSUInteger)priority originNumberValue:(NSNumber *)originNumberValue {
+    if (!operation) { return NO; }
+    if (!reason) { return NO; }
+    if (!numberValue) { return NO; }
     //添加reason之前记录原始值
-    if (![self.hiddenOperation wbv_scenesCount]) {
-        self.oriHiddenBeforeOperation = [NSNumber numberWithBool:self.hidden];
+    if (![operation wbv_scenesCount]) {
+        originNumberValue = numberValue;
     }
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *currentSceneObject = [[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> alloc] init];
     currentSceneObject.scene = reason;
     currentSceneObject.priority = priority;
-    currentSceneObject.numberValue = [NSNumber numberWithBool:hidden];
-    [self.hiddenOperation wbv_addSceneObject:currentSceneObject];
-    
-    [self _setHiddenWithPriorityHighScene];
+    currentSceneObject.numberValue = numberValue;
+    [operation wbv_addSceneObject:currentSceneObject];
+    return YES;
 }
 
-- (void)_setHiddenWithPriorityHighScene {
-    WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *highestPrioritySceneObject = (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)[self.hiddenOperation wbv_currentHighestSceneObject];
+/// 找出最高权重的scene里的numberValue
+/// @param operation operation description
++ (NSNumber *)_numberValueInHighestPrioritySceneObjectWithOperation:(WBOperationObject *)operation {
+    if (!operation) { return nil; }
+    WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *highestPrioritySceneObject = (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)[operation wbv_currentHighestSceneObject];
     if (![highestPrioritySceneObject isKindOfClass:[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> class]]) {
-        return;
+        return nil;
     }
     if (![highestPrioritySceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
-        return;
+        return nil;
     }
     if (![highestPrioritySceneObject respondsToSelector:@selector(numberValue)]) {
-        return;
+        return nil;
     }
-    BOOL _hidden = [highestPrioritySceneObject.numberValue boolValue];
-    if (self.hidden ^ _hidden) {
-        self.hidden = _hidden;
-    }
+    return highestPrioritySceneObject.numberValue;
 }
 
-- (void)wbv_removeHiddenReason:(NSString *)reason {
-    if (!reason) { return; }
+/// 移除操作中的某个场景
+/// @param operation operation description
+/// @param reason 需要移除的场景
++ (BOOL)_operation:(WBOperationObject *)operation removeReason:(NSString *)reason {
+    if (!operation) { return NO; }
+    if (!reason) { return NO; }
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *currentSceneObject = [[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> alloc] init];
     currentSceneObject.scene = reason;
-    if (![self.hiddenOperation wbv_containsSceneObject:currentSceneObject]) {
-        return;
+    if (![operation wbv_containsSceneObject:currentSceneObject]) {
+        return NO;
     }
-    [self.hiddenOperation wbv_removeSceneObject:currentSceneObject];
-    
-    [self _setHiddenWithPriorityHighScene];
-    
-    //移除所有reason之后恢复原始值
-    [self _recoverOriginHiddenStateIfNeed];
+    [operation wbv_removeSceneObject:currentSceneObject];
+    return YES;
 }
 
-- (NSObject<WBVDuplicativeSceneProtocol> *)wbv_currentHiddenPriorityHighestSceneObject {
-    WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *highestPrioritySceneObject = (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)[self.hiddenOperation wbv_currentHighestSceneObject];
+/// 找到在当前所有操作中权重最高的场景
+/// @param operation operation description
++ (NSObject<WBVDuplicativeSceneProtocol> *)_currentPriorityHighestSceneObjectWithOperation:(WBOperationObject *)operation {
+    if (!operation) { return nil; }
+    WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *highestPrioritySceneObject = (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)[operation wbv_currentHighestSceneObject];
     if (![highestPrioritySceneObject isKindOfClass:[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> class]]) {
         return nil;
     }
@@ -223,28 +232,12 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     return highestPrioritySceneObject;
 }
 
-- (void)wbv_removeAllHiddenReasons {
-    [self.hiddenOperation wbv_removeAllSceneObjects];
-    
-    //移除所有reason之后恢复原始值
-    [self _recoverOriginHiddenStateIfNeed];
-}
-
-/// 如果所有的reason都被清空了，且记录了原始值，会恢复成原始值
-- (void)_recoverOriginHiddenStateIfNeed {
-    if ([self.hiddenOperation wbv_scenesCount]) {
-        return;
-    }
-    if (!self.oriHiddenBeforeOperation) {
-        return;
-    }
-    self.hidden = [self.oriHiddenBeforeOperation boolValue];
-    self.oriHiddenBeforeOperation = nil;
-}
-
-- (NSDictionary<NSString *,NSNumber *> *)wbv_allHiddenReasonsAndPriorities {
+/// 列出所有的操作场景
+/// @param operation operation description
++ (NSDictionary<NSString *,NSNumber *> *)_allHiddenReasonsAndPrioritiesWithOperation:(WBOperationObject *)operation {
     NSMutableDictionary *mutDict = [NSMutableDictionary dictionary];
-    NSArray<NSObject<WBVDuplicativeSceneProtocol> *> *sceneObjects = [self.hiddenOperation wbv_allSceneObjects];
+    if (!operation) { return [mutDict copy]; }
+    NSArray<NSObject<WBVDuplicativeSceneProtocol> *> *sceneObjects = [operation wbv_allSceneObjects];
     if (!sceneObjects.count) {
         return [mutDict copy];
     }
@@ -256,11 +249,94 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     return [mutDict copy];
 }
 
-- (BOOL)wbv_containsHiddenReason:(NSString *)reason {
+/// 当前所有的操作场景中，是否包含某一个场景
+/// @param operation operation description
+/// @param reason 某一个场景
++ (BOOL)_operation:(WBOperationObject *)operation containsReason:(NSString *)reason {
+    if (!operation) { return NO; }
     if (!reason) { return NO; }
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *currentSceneObject = [[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> alloc] init];
     currentSceneObject.scene = reason;
-    return [self.hiddenOperation wbv_containsSceneObject:currentSceneObject];
+    return [operation wbv_containsSceneObject:currentSceneObject];
+}
+
+/// 移除操作中所有的场景
+/// @param operation operation description
++ (BOOL)_operationRemoveAllReasons:(WBOperationObject *)operation {
+    if (!operation) { return NO; }
+    [operation wbv_removeAllSceneObjects];
+    return YES;
+}
+
+#pragma mark - hidden public method
+
+- (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason {
+    [self wbv_setHidden:hidden reason:reason priority:WBDuplicativeScenePriorityMedium];
+}
+- (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason priority:(NSUInteger)priority {
+    if (!reason) { return; }
+    BOOL _setHidden = [UIView _operation:self.hiddenOperation setNumberValue:[NSNumber numberWithBool:hidden] reason:reason priority:priority originNumberValue:self.oriHiddenBeforeOperation];
+    if (!_setHidden) { return; }
+    //添加新的场景后，设置成当前最高权重操作的值
+    [self _setHiddenWithPriorityHighScene];
+}
+
+- (void)wbv_removeHiddenReason:(NSString *)reason {
+    if (!reason) { return; }
+    BOOL _removeReason = [UIView _operation:self.hiddenOperation removeReason:reason];
+    if (!_removeReason) { return; }
+    //移除某个场景后，设置成当前最高权重操作的值
+    BOOL _setHighest = [self _setHiddenWithPriorityHighScene];
+    if (!_setHighest) { return; }
+    //移除所有reason之后恢复原始值
+    [self _recoverOriginHiddenStateIfNeed];
+}
+
+- (NSObject<WBVDuplicativeSceneProtocol> *)wbv_currentHiddenPriorityHighestSceneObject {
+    return [UIView _currentPriorityHighestSceneObjectWithOperation:self.hiddenOperation];
+}
+
+- (void)wbv_removeAllHiddenReasons {
+    BOOL _removeAll = [UIView _operationRemoveAllReasons:self.hiddenOperation];
+    if (!_removeAll) { return; }
+    //移除所有reason之后恢复原始值
+    [self _recoverOriginHiddenStateIfNeed];
+}
+
+- (NSDictionary<NSString *,NSNumber *> *)wbv_allHiddenReasonsAndPriorities {
+    return [UIView _allHiddenReasonsAndPrioritiesWithOperation:self.hiddenOperation];
+}
+
+- (BOOL)wbv_containsHiddenReason:(NSString *)reason {
+    return [UIView _operation:self.hiddenOperation containsReason:reason];
+}
+
+#pragma mark - hidden private method
+
+- (BOOL)_setHiddenWithPriorityHighScene {
+    NSNumber *valNumber = [UIView _numberValueInHighestPrioritySceneObjectWithOperation:self.hiddenOperation];
+    if (!valNumber) { return NO; }
+    BOOL _hidden = [valNumber boolValue];
+    if (self.hidden ^ _hidden) {
+        self.hidden = _hidden;
+    }
+    return YES;
+}
+
+/// 如果所有的场景都被清空了，且记录了原始值，会恢复成原始值
+- (BOOL)_recoverOriginHiddenStateIfNeed {
+    if ([self.hiddenOperation wbv_scenesCount]) {
+        return NO;
+    }
+    if (!self.oriHiddenBeforeOperation) {
+        return NO;
+    }
+    BOOL _hidden = [self.oriHiddenBeforeOperation boolValue];
+    if (self.hidden ^ _hidden) {
+        self.hidden = _hidden;
+    }
+    self.oriHiddenBeforeOperation = nil;
+    return YES;
 }
 
 @end
