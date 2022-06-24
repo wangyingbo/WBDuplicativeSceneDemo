@@ -18,8 +18,8 @@ FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityLow;
 @property (nonatomic, copy) NSString *scene;
 /// 操作场景权重
 @property (nonatomic, assign) NSUInteger priority;
-/// 操作的值，可以是alpha、hidden等
-@property (nonatomic, strong) NSNumber *numberValue;
+/// 操作的值，可以是alpha、hidden等，用来透传和记录
+@property (nonatomic, strong) id userInfo;
 @end
 
 @interface WBVDuplicativeScene : NSObject<WBVDuplicativeSceneProtocol>

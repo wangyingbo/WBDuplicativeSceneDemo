@@ -16,10 +16,12 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 @implementation WBVDuplicativeScene
 @synthesize scene = _scene;
 @synthesize priority = _priority;
-@synthesize numberValue = _numberValue;
+@synthesize userInfo = _userInfo;
 @end
 
 @interface WBOperationObject ()
+/// 记录操作前的原始值
+@property (nonatomic, strong) id originUserInfo;
 @property (nonatomic, strong) NSMutableArray *scenesMutArray;
 @end
 
@@ -132,8 +134,6 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 @interface UIView ()
 /// 操作hidden的object
 @property (nonatomic, strong) WBOperationObject *hiddenOperation;
-/// 记录操作前的原始值
-@property (nonatomic, strong) NSNumber *oriHiddenBeforeOperation;
 @end
 
 @implementation UIView (WBVScene)
@@ -154,41 +154,32 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     objc_setAssociatedObject(self, @selector(hiddenOperation), hiddenOperation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (NSNumber *)oriHiddenBeforeOperation {
-    return objc_getAssociatedObject(self, _cmd);
-}
-
-- (void)setOriHiddenBeforeOperation:(NSNumber *)oriHiddenBeforeOperation {
-    objc_setAssociatedObject(self, @selector(oriHiddenBeforeOperation), oriHiddenBeforeOperation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
 #pragma mark - universal methods
 
 /// 给operation添加操作的scene，并记录操作前的原始值
 /// @param operation 操作对象
-/// @param numberValue 需要操作的值
+/// @param userInfo 需要操作的值
 /// @param reason 操作的场景
 /// @param priority 权重
-/// @param originNumberValue 保存原始值的对象
-+ (BOOL)_operation:(WBOperationObject *)operation setNumberValue:(NSNumber *)numberValue reason:(NSString *)reason priority:(NSUInteger)priority originNumberValue:(NSNumber *)originNumberValue {
++ (BOOL)_operation:(WBOperationObject *)operation setUserInfo:(id)userInfo reason:(NSString *)reason priority:(NSUInteger)priority originUserInfo:(id)originUserInfo  {
     if (!operation) { return NO; }
     if (!reason) { return NO; }
-    if (!numberValue) { return NO; }
+    if (!userInfo) { return NO; }
     //添加reason之前记录原始值
     if (![operation wbv_scenesCount]) {
-        originNumberValue = numberValue;
+        operation.originUserInfo = originUserInfo;
     }
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *currentSceneObject = [[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> alloc] init];
     currentSceneObject.scene = reason;
     currentSceneObject.priority = priority;
-    currentSceneObject.numberValue = numberValue;
+    currentSceneObject.userInfo = userInfo;
     [operation wbv_addSceneObject:currentSceneObject];
     return YES;
 }
 
-/// 找出最高权重的scene里的numberValue
+/// 找出最高权重的scene里的userInfo
 /// @param operation operation description
-+ (NSNumber *)_numberValueInHighestPrioritySceneObjectWithOperation:(WBOperationObject *)operation {
++ (id)_userInfoInHighestPrioritySceneObjectWithOperation:(WBOperationObject *)operation {
     if (!operation) { return nil; }
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *highestPrioritySceneObject = (WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *)[operation wbv_currentHighestSceneObject];
     if (![highestPrioritySceneObject isKindOfClass:[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> class]]) {
@@ -197,10 +188,22 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     if (![highestPrioritySceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
         return nil;
     }
-    if (![highestPrioritySceneObject respondsToSelector:@selector(numberValue)]) {
+    if (![highestPrioritySceneObject respondsToSelector:@selector(userInfo)]) {
         return nil;
     }
-    return highestPrioritySceneObject.numberValue;
+    return highestPrioritySceneObject.userInfo;
+}
+
+/// 获取当前操作前的原始值
+/// @param operation operation description
++ (id)_originUserInfoWithOperation:(WBOperationObject *)operation {
+    if ([operation wbv_scenesCount]) {
+        return nil;
+    }
+    if (!operation.originUserInfo) {
+        return nil;
+    }
+    return operation.originUserInfo;
 }
 
 /// 移除操作中的某个场景
@@ -275,7 +278,7 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 }
 - (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason priority:(NSUInteger)priority {
     if (!reason) { return; }
-    BOOL _setHidden = [UIView _operation:self.hiddenOperation setNumberValue:[NSNumber numberWithBool:hidden] reason:reason priority:priority originNumberValue:self.oriHiddenBeforeOperation];
+    BOOL _setHidden = [UIView _operation:self.hiddenOperation setUserInfo:[NSNumber numberWithBool:hidden] reason:reason priority:priority originUserInfo:[NSNumber numberWithBool:self.hidden]];
     if (!_setHidden) { return; }
     //添加新的场景后，设置成当前最高权重操作的值
     [self _setHiddenWithPriorityHighScene];
@@ -314,9 +317,11 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 #pragma mark - hidden private method
 
 - (BOOL)_setHiddenWithPriorityHighScene {
-    NSNumber *valNumber = [UIView _numberValueInHighestPrioritySceneObjectWithOperation:self.hiddenOperation];
-    if (!valNumber) { return NO; }
-    BOOL _hidden = [valNumber boolValue];
+    NSNumber *userInfo = [UIView _userInfoInHighestPrioritySceneObjectWithOperation:self.hiddenOperation];
+    if (![userInfo isKindOfClass:[NSNumber class]]) {
+        return NO;
+    }
+    BOOL _hidden = [userInfo boolValue];
     if (self.hidden ^ _hidden) {
         self.hidden = _hidden;
     }
@@ -325,17 +330,15 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 
 /// 如果所有的场景都被清空了，且记录了原始值，会恢复成原始值
 - (BOOL)_recoverOriginHiddenStateIfNeed {
-    if ([self.hiddenOperation wbv_scenesCount]) {
+    NSNumber *originUserInfo = [UIView _originUserInfoWithOperation:self.hiddenOperation];
+    if (![originUserInfo isKindOfClass:[NSNumber class]]) {
         return NO;
     }
-    if (!self.oriHiddenBeforeOperation) {
-        return NO;
-    }
-    BOOL _hidden = [self.oriHiddenBeforeOperation boolValue];
+    BOOL _hidden = [originUserInfo boolValue];
     if (self.hidden ^ _hidden) {
         self.hidden = _hidden;
     }
-    self.oriHiddenBeforeOperation = nil;
+    self.hiddenOperation.originUserInfo = nil;
     return YES;
 }
 
