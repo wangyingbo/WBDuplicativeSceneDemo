@@ -41,7 +41,7 @@ FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityLow;
 #pragma mark - hidden public methods
 
 /**
- 默认priority值：WBDuplicativeScenePriorityMedium，一般使用此方法。
+ 默认priority值：WBDuplicativeScenePriorityMedium，一般使用此方法设置hidden，reason具有唯一性。
  */
 - (void)wbv_setHidden:(BOOL)hidden reason:(NSString *)reason;
 /**

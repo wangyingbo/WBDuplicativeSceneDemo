@@ -38,6 +38,12 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     if (![sceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
         return;
     }
+    if (![sceneObject respondsToSelector:@selector(scene)]) {
+        return;
+    }
+    if (![sceneObject respondsToSelector:@selector(priority)]) {
+        return;
+    }
     if (!self.scenesMutArray.count) {
         [self.scenesMutArray addObject:sceneObject];
         return;
@@ -46,6 +52,8 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     __block NSInteger replaceIndex = WBDuplicativeSceneInitialValue;
     for (NSUInteger i = 0; i < self.scenesMutArray.count; i++) {
         NSObject<WBVDuplicativeSceneProtocol> *object = [self.scenesMutArray objectAtIndex:i];
+        if (![object respondsToSelector:@selector(scene)]) { continue; }
+        if (![object respondsToSelector:@selector(priority)]) { continue; }
         if ([sceneObject.scene isEqualToString:object.scene] && replaceIndex == WBDuplicativeSceneInitialValue) {
             replaceIndex = i;
             break;
@@ -68,12 +76,16 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     if (![sceneObject conformsToProtocol:@protocol(WBVDuplicativeSceneProtocol)]) {
         return;
     }
+    if (![sceneObject respondsToSelector:@selector(scene)]) {
+        return;
+    }
     if (!self.scenesMutArray.count) {
         return;
     }
     __block NSInteger removeIndex = WBDuplicativeSceneInitialValue;
     for (NSUInteger i = 0; i < self.scenesMutArray.count; i++) {
         NSObject<WBVDuplicativeSceneProtocol> *object = [self.scenesMutArray objectAtIndex:i];
+        if (![object respondsToSelector:@selector(scene)]) { continue; }
         if ([sceneObject.scene isEqualToString:object.scene] && removeIndex == WBDuplicativeSceneInitialValue) {
             removeIndex = i;
             break;
@@ -87,6 +99,8 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 /// 从大到小排序
 - (void)_sortArrayDescending {
     [self.scenesMutArray sortedArrayUsingComparator:^NSComparisonResult(NSObject<WBVDuplicativeSceneProtocol> * _Nonnull obj1, NSObject<WBVDuplicativeSceneProtocol> * _Nonnull obj2) {
+        if (![obj1 respondsToSelector:@selector(priority)]) { return NSOrderedSame; }
+        if (![obj2 respondsToSelector:@selector(priority)]) { return NSOrderedSame; }
         if (obj1.priority < obj2.priority) {
             return NSOrderedDescending;
         }else if (obj1.priority == obj2.priority) {
@@ -112,8 +126,12 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     if (!self.scenesMutArray.count) {
         return NO;
     }
+    if (![sceneObject respondsToSelector:@selector(scene)]) {
+        return NO;
+    }
     for (NSUInteger i = 0; i < self.scenesMutArray.count; i++) {
         NSObject<WBVDuplicativeSceneProtocol> *object = [self.scenesMutArray objectAtIndex:i];
+        if (![object respondsToSelector:@selector(scene)]) { continue; }
         if ([sceneObject.scene isEqualToString:object.scene]) {
             return YES;
         }
@@ -170,6 +188,9 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
         operation.originUserInfo = originUserInfo;
     }
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *currentSceneObject = [[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> alloc] init];
+    if (![currentSceneObject respondsToSelector:@selector(setScene:)]) { return NO; }
+    if (![currentSceneObject respondsToSelector:@selector(setPriority:)]) { return NO; }
+    if (![currentSceneObject respondsToSelector:@selector(setUserInfo:)]) { return NO; }
     currentSceneObject.scene = reason;
     currentSceneObject.priority = priority;
     currentSceneObject.userInfo = userInfo;
@@ -213,6 +234,7 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     if (!operation) { return NO; }
     if (!reason) { return NO; }
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *currentSceneObject = [[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> alloc] init];
+    if (![currentSceneObject respondsToSelector:@selector(setScene:)]) { return NO; }
     currentSceneObject.scene = reason;
     if (![operation wbv_containsSceneObject:currentSceneObject]) {
         return NO;
@@ -245,8 +267,16 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
         return [mutDict copy];
     }
     for (NSObject<WBVDuplicativeSceneProtocol> *sceneObject in sceneObjects) {
-        if ([sceneObject scene]) {
-            [mutDict setObject:[NSNumber numberWithInteger:[sceneObject priority]] forKey:[sceneObject scene]];
+        NSString *_scene = nil;
+        if ([sceneObject respondsToSelector:@selector(scene)]) {
+            _scene = [sceneObject scene];
+        }
+        NSNumber *_priorityNum = nil;
+        if ([sceneObject respondsToSelector:@selector(priority)]) {
+            _priorityNum = [NSNumber numberWithInteger:[sceneObject priority]];
+        }
+        if (_scene && _priorityNum) {
+            [mutDict setObject:_priorityNum forKey:_scene];
         }
     }
     return [mutDict copy];
@@ -259,6 +289,7 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     if (!operation) { return NO; }
     if (!reason) { return NO; }
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *currentSceneObject = [[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> alloc] init];
+    if (![currentSceneObject respondsToSelector:@selector(setScene:)]) { return NO; }
     currentSceneObject.scene = reason;
     return [operation wbv_containsSceneObject:currentSceneObject];
 }
