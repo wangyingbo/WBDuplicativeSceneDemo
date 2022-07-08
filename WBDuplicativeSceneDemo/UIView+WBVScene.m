@@ -288,6 +288,7 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 + (BOOL)_operation:(WBOperationObject *)operation containsReason:(NSString *)reason {
     if (!operation) { return NO; }
     if (!reason) { return NO; }
+    if (![UIView _sceneCountWithOperation:operation]) { return NO; }
     WBVDuplicativeScene<WBVDuplicativeSceneProtocol> *currentSceneObject = [[WBVDuplicativeScene<WBVDuplicativeSceneProtocol> alloc] init];
     if (![currentSceneObject respondsToSelector:@selector(setScene:)]) { return NO; }
     currentSceneObject.scene = reason;
@@ -300,6 +301,13 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     if (!operation) { return NO; }
     [operation wbv_removeAllSceneObjects];
     return YES;
+}
+
+/// 当前操作中操作场景的数量
+/// @param operation operation description
++ (NSUInteger)_sceneCountWithOperation:(WBOperationObject *)operation {
+    if (!operation) { return 0; }
+    return [operation wbv_scenesCount];
 }
 
 #pragma mark - hidden public method
@@ -320,8 +328,7 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     BOOL _removeReason = [UIView _operation:self.hiddenOperation removeReason:reason];
     if (!_removeReason) { return; }
     //移除某个场景后，设置成当前最高权重操作的值
-    BOOL _setHighest = [self _setHiddenWithPriorityHighScene];
-    if (!_setHighest) { return; }
+    [self _setHiddenWithPriorityHighScene];
     //移除所有reason之后恢复原始值
     [self _recoverOriginHiddenStateIfNeed];
 }
@@ -345,6 +352,10 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     return [UIView _operation:self.hiddenOperation containsReason:reason];
 }
 
+- (NSUInteger)wbv_hiddenReasonCount {
+    return [UIView _sceneCountWithOperation:self.hiddenOperation];
+}
+
 #pragma mark - hidden private method
 
 - (BOOL)_setHiddenWithPriorityHighScene {
@@ -361,6 +372,9 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 
 /// 如果所有的场景都被清空了，且记录了原始值，会恢复成原始值
 - (BOOL)_recoverOriginHiddenStateIfNeed {
+    if ([self wbv_hiddenReasonCount]) {
+        return NO;
+    }
     NSNumber *originUserInfo = [UIView _originUserInfoWithOperation:self.hiddenOperation];
     if (![originUserInfo isKindOfClass:[NSNumber class]]) {
         return NO;

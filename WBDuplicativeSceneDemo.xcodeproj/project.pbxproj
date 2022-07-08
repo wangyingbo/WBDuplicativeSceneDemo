@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A44EC47C2878008A00E5F7BD /* NSObject+Duplicative.m in Sources */ = {isa = PBXBuildFile; fileRef = A44EC47B2878008A00E5F7BD /* NSObject+Duplicative.m */; };
 		A463ACC1285A275C00630E21 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A463ACC0285A275C00630E21 /* AppDelegate.m */; };
 		A463ACC4285A275C00630E21 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A463ACC3285A275C00630E21 /* SceneDelegate.m */; };
 		A463ACC7285A275C00630E21 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A463ACC6285A275C00630E21 /* ViewController.m */; };
@@ -38,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A44EC47A2878008A00E5F7BD /* NSObject+Duplicative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Duplicative.h"; sourceTree = "<group>"; };
+		A44EC47B2878008A00E5F7BD /* NSObject+Duplicative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Duplicative.m"; sourceTree = "<group>"; };
 		A463ACBC285A275C00630E21 /* WBDuplicativeSceneDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WBDuplicativeSceneDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A463ACBF285A275C00630E21 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A463ACC0285A275C00630E21 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -84,6 +87,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A44EC4792878006B00E5F7BD /* ObjectDuplicative */ = {
+			isa = PBXGroup;
+			children = (
+				A44EC47A2878008A00E5F7BD /* NSObject+Duplicative.h */,
+				A44EC47B2878008A00E5F7BD /* NSObject+Duplicative.m */,
+			);
+			path = ObjectDuplicative;
+			sourceTree = "<group>";
+		};
 		A463ACB3285A275C00630E21 = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +119,7 @@
 		A463ACBE285A275C00630E21 /* WBDuplicativeSceneDemo */ = {
 			isa = PBXGroup;
 			children = (
+				A44EC4792878006B00E5F7BD /* ObjectDuplicative */,
 				A463ACBF285A275C00630E21 /* AppDelegate.h */,
 				A463ACC0285A275C00630E21 /* AppDelegate.m */,
 				A463ACC2285A275C00630E21 /* SceneDelegate.h */,
@@ -275,6 +288,7 @@
 				A463ACC1285A275C00630E21 /* AppDelegate.m in Sources */,
 				A463ACD2285A275E00630E21 /* main.m in Sources */,
 				A463ACF6285A286F00630E21 /* UIView+WBVScene.m in Sources */,
+				A44EC47C2878008A00E5F7BD /* NSObject+Duplicative.m in Sources */,
 				A463ACC4285A275C00630E21 /* SceneDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

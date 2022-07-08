@@ -68,6 +68,10 @@ FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityLow;
  判断是否包含某个reason。
  */
 - (BOOL)wbv_containsHiddenReason:(NSString *)reason;
+/**
+ 当前hidden操作中reason的数量。
+ */
+- (NSUInteger)wbv_hiddenReasonCount;
 
 @end
 
