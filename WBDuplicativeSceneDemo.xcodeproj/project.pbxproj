@@ -19,6 +19,7 @@
 		A463ACE6285A275E00630E21 /* WBDuplicativeSceneDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = A463ACE5285A275E00630E21 /* WBDuplicativeSceneDemoUITests.m */; };
 		A463ACE8285A275E00630E21 /* WBDuplicativeSceneDemoUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A463ACE7285A275E00630E21 /* WBDuplicativeSceneDemoUITestsLaunchTests.m */; };
 		A463ACF6285A286F00630E21 /* UIView+WBVScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A463ACF5285A286F00630E21 /* UIView+WBVScene.m */; };
+		A46EC91A2881696600B51965 /* NSString+WBStory.m in Sources */ = {isa = PBXBuildFile; fileRef = A46EC9192881696600B51965 /* NSString+WBStory.m */; };
 		A4C16B58287BC54900E32C7A /* UIView+WBSVIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = A4C16B56287BC54900E32C7A /* UIView+WBSVIndicator.m */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +62,8 @@
 		A463ACE7285A275E00630E21 /* WBDuplicativeSceneDemoUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WBDuplicativeSceneDemoUITestsLaunchTests.m; sourceTree = "<group>"; };
 		A463ACF4285A286F00630E21 /* UIView+WBVScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+WBVScene.h"; sourceTree = "<group>"; };
 		A463ACF5285A286F00630E21 /* UIView+WBVScene.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+WBVScene.m"; sourceTree = "<group>"; };
+		A46EC9182881696600B51965 /* NSString+WBStory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+WBStory.h"; sourceTree = "<group>"; };
+		A46EC9192881696600B51965 /* NSString+WBStory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+WBStory.m"; sourceTree = "<group>"; };
 		A4C16B56287BC54900E32C7A /* UIView+WBSVIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+WBSVIndicator.m"; sourceTree = "<group>"; };
 		A4C16B57287BC54900E32C7A /* UIView+WBSVIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+WBSVIndicator.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -133,6 +136,8 @@
 				A4C16B56287BC54900E32C7A /* UIView+WBSVIndicator.m */,
 				A463ACF4285A286F00630E21 /* UIView+WBVScene.h */,
 				A463ACF5285A286F00630E21 /* UIView+WBVScene.m */,
+				A46EC9182881696600B51965 /* NSString+WBStory.h */,
+				A46EC9192881696600B51965 /* NSString+WBStory.m */,
 				A463ACC8285A275C00630E21 /* Main.storyboard */,
 				A463ACCB285A275E00630E21 /* Assets.xcassets */,
 				A463ACCD285A275E00630E21 /* LaunchScreen.storyboard */,
@@ -291,6 +296,7 @@
 			files = (
 				A463ACC7285A275C00630E21 /* ViewController.m in Sources */,
 				A463ACC1285A275C00630E21 /* AppDelegate.m in Sources */,
+				A46EC91A2881696600B51965 /* NSString+WBStory.m in Sources */,
 				A463ACD2285A275E00630E21 /* main.m in Sources */,
 				A4C16B58287BC54900E32C7A /* UIView+WBSVIndicator.m in Sources */,
 				A463ACF6285A286F00630E21 /* UIView+WBVScene.m in Sources */,
