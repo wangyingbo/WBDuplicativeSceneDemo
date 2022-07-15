@@ -10,6 +10,11 @@
 
 @implementation NSString (WBStory)
 
+- (NSInteger)WBLStringCount
+{
+    return ceil(([self lengthOfBytesUsingEncoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)]/2.0f));
+}
+
 - (NSUInteger)wbst_charIndexOfMaxWordCount:(NSUInteger)count;
 {
     if (count == 0) {

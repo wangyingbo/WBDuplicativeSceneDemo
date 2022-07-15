@@ -11,6 +11,14 @@
 
 @interface NSString (WBStory)
 
+/**
+ *  字符串字数
+ *  中文为 1 位，英文为 0.5 个
+ *
+ *  @return 字符串字数
+ */
+- (NSInteger)WBLStringCount;
+
 - (NSUInteger)wbst_charIndexOfMaxWordCount:(NSUInteger)count; //word count
 
 - (NSString *)wbst_stringWithMaxWordCount:(NSUInteger)count; //word count
