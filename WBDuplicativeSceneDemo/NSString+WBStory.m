@@ -295,3 +295,83 @@
 }
 
 @end
+
+@implementation NSString (WBTCountWord)
+
+- (int)wbt_wordCount
+{
+    // Source: http://www.cocoachina.com/macdev/cocoa/2011/0110/2552.html
+    int i,l = 0, a = 0, b = 0;
+    NSUInteger n = [self length];
+    
+    unichar c;
+    
+    for (i = 0; i < n; i++)
+    {
+        c = [self characterAtIndex:i];
+        
+        if (isblank(c))
+        {
+            b++;
+        }
+        else if (isascii(c))
+        {
+            a++;
+        }
+        else
+        {
+            l++;
+        }
+    }
+    
+    if (a == 0 && l == 0)
+    {
+        return 0;
+    }
+    
+    return l + (int)ceilf((float)(a + b) / 2.0);
+}
+
+- (int)wbt_asciiCount
+{
+    int result = 0;
+    
+    NSUInteger n = [self length];
+    
+    for (int i = 0; i < n; i++)
+    {
+        unichar c = [self characterAtIndex:i];
+        
+        if (isblank(c) || isascii(c))
+        {
+            result += 1;
+        }
+        else
+        {
+            result += 2;
+        }
+    }
+    
+    return result;
+}
+
+- (BOOL)wbt_isEmpty
+{
+    int i;
+    NSUInteger n = [self length];
+    
+    unichar c;
+    
+    for (i = 0; i < n; i++)
+    {
+        c = [self characterAtIndex:i];
+        
+        if (!isblank(c) && !isspace(c) && c != '\n')
+        {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+@end

@@ -63,3 +63,33 @@
 + (NSString *)maxSourceTitle:(NSString *)str maxLen:(NSInteger)maxLen;
 + (NSInteger)sourceTitleLength:(NSString *)str;
 @end
+
+
+/*!
+ *  文字计数相关工具方法
+ */
+@interface NSString (WBTCountWord)
+
+/*!
+ *  返回当前字符串的字数
+ *
+ *  @return 字数
+ */
+- (int)wbt_wordCount;
+
+/*!
+ *  返回 ASCII 字符的长度，如：英文占1，中文占2
+ *
+ *  @return 长度
+ */
+- (int)wbt_asciiCount;
+
+/*!
+ *  判断当前字符串是否有非空字符
+ *
+ *  @return YES为空，NO不为空
+ */
+- (BOOL)wbt_isEmpty;
+
+
+@end
