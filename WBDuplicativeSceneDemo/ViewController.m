@@ -7,7 +7,7 @@
 
 #import "ViewController.h"
 #import "UIView+WBVScene.h"
-
+#import "NSString+WBStory.h"
 
 @interface ViewController ()
 @property (nonatomic, strong) UIView *redView;
@@ -68,18 +68,34 @@ static NSString * const RedViewHiddenReasonSecond = @"RedViewHiddenReasonSecond"
         [self.redView wbv_setHidden:YES reason:RedViewHiddenReasonFirst priority:WBDuplicativeScenePriorityMedium];
     }
     NSLog(@"%@",[self.redView wbv_allHiddenReasonsAndPriorities]);
+    [self testAsciiString];
 }
 
 - (void)rightButtonClick:(id)sender {
     if ([self.redView wbv_containsHiddenReason:RedViewHiddenReasonSecond]) {
         [self.redView wbv_removeHiddenReason:RedViewHiddenReasonSecond];
     }else {
-        [self.redView wbv_setHidden:NO reason:RedViewHiddenReasonSecond priority:WBDuplicativeScenePriorityHigh];
+        [self.redView wbv_setHidden:NO reason:RedViewHiddenReasonSecond priority:WBDuplicativeScenePriorityMedium];
     }
     NSLog(@"%@",[self.redView wbv_allHiddenReasonsAndPriorities]);
 }
 
 #pragma mark - actions
 
+- (void)testAsciiString {
+    NSString *nameStr = @"wb微博技术开发视频开发";
+    if (nameStr) {
+        NSInteger maxLengh = 6;
+        NSString *suffix = @"";
+        if ([nameStr wbt_wordCount] > maxLengh) {
+            suffix = @"...";
+        }
+        NSString *tempNameStr = [nameStr wbst_stringWithMaxWordCount:maxLengh];
+        if (tempNameStr) {
+            nameStr = [tempNameStr stringByAppendingString:suffix];
+        }
+        NSLog(@"%@",nameStr);
+    }
+}
 
 @end
