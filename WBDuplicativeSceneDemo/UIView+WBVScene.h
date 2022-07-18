@@ -13,6 +13,20 @@ FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityHigh;
 FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityMedium;
 FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityLow;
 
+typedef NS_ENUM(NSUInteger,WBDuplicativeScenePriorityLevel) {
+    WBDuplicativeScenePriorityLevel_0 = 250,//WBDuplicativeScenePriorityLow
+    WBDuplicativeScenePriorityLevel_1 = 300,
+    WBDuplicativeScenePriorityLevel_2 = 350,
+    WBDuplicativeScenePriorityLevel_3 = 400,
+    WBDuplicativeScenePriorityLevel_4 = 450,
+    WBDuplicativeScenePriorityLevel_5 = 500,//WBDuplicativeScenePriorityMedium
+    WBDuplicativeScenePriorityLevel_6 = 550,
+    WBDuplicativeScenePriorityLevel_7 = 600,
+    WBDuplicativeScenePriorityLevel_8 = 650,
+    WBDuplicativeScenePriorityLevel_9 = 700,
+    WBDuplicativeScenePriorityLevel_10 = 750,//WBDuplicativeScenePriorityHigh
+};
+
 @protocol WBVDuplicativeSceneProtocol <NSObject>
 /// 操作场景描述
 @property (nonatomic, copy) NSString *scene;
