@@ -237,7 +237,7 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     if (![currentSceneObject respondsToSelector:@selector(setScene:)]) { return NO; }
     currentSceneObject.scene = reason;
     if (![operation wbv_containsSceneObject:currentSceneObject]) {
-        return NO;
+        return YES;
     }
     [operation wbv_removeSceneObject:currentSceneObject];
     return YES;
