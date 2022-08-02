@@ -87,6 +87,41 @@ typedef NS_ENUM(NSUInteger,WBDuplicativeScenePriorityLevel) {
  */
 - (NSUInteger)wbv_hiddenReasonCount;
 
+#pragma mark - alpha public methods
+
+/**
+ 默认priority值：WBDuplicativeScenePriorityMedium，一般使用此方法设置alpha，reason具有唯一性。
+ */
+- (void)wbv_setAlpha:(CGFloat)alpha reason:(NSString *)reason;
+/**
+ 可以设置权重来设置alpha，内部会根据权重从大到小排序，以权重最高的reason的操作为实际设置alpha的效果，如果权重设置的比默认的WBDuplicativeScenePriorityMedium高，则一定要调用-wbv_removeAlphaReason:方法移除自己设置的的reason。
+ */
+- (void)wbv_setAlpha:(CGFloat)alpha reason:(NSString *)reason priority:(NSUInteger)priority;
+/**
+ 移除某一reason，移除后会把当前alpha设置成所有reason中权重最高的那个，如果移除后不存在reason，会恢复原值。
+ */
+- (void)wbv_removeAlphaReason:(NSString *)reason;
+/**
+ 查看当前权重最高的设置alpha的reason和权重。
+ */
+- (NSObject<WBVDuplicativeSceneProtocol> *)wbv_currentAlphaPriorityHighestSceneObject;
+/**
+ 用来查看当前所有的alpha相关的reason和priority。
+ */
+- (NSDictionary<NSString *,NSNumber *> *)wbv_allAlphaReasonsAndPriorities;
+/**
+ 移除所有的reasons，移除成功后如果记录的有原值，会恢复成原值。
+ */
+- (void)wbv_removeAllAlphaReasons;
+/**
+ 判断是否包含某个reason。
+ */
+- (BOOL)wbv_containsAlphaReason:(NSString *)reason;
+/**
+ 当前alpha操作中reason的数量。
+ */
+- (NSUInteger)wbv_alphaReasonCount;
+
 @end
 
 NS_ASSUME_NONNULL_END

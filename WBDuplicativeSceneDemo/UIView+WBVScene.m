@@ -152,6 +152,8 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 @interface UIView ()
 /// 操作hidden的object
 @property (nonatomic, strong) WBOperationObject *hiddenOperation;
+/// 操作alpha的object
+@property (nonatomic, strong) WBOperationObject *alphaOperation;
 @end
 
 @implementation UIView (WBVScene)
@@ -170,6 +172,20 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 
 - (void)setHiddenOperation:(WBOperationObject *)hiddenOperation {
     objc_setAssociatedObject(self, @selector(hiddenOperation), hiddenOperation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (WBOperationObject *)alphaOperation {
+    WBOperationObject *object = objc_getAssociatedObject(self, _cmd);
+    if (object && [object isKindOfClass:[WBOperationObject class]]) {
+        return object;
+    }
+    object = [[WBOperationObject alloc] init];
+    objc_setAssociatedObject(self, _cmd, object, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    return object;
+}
+
+- (void)setAlphaOperation:(WBOperationObject *)alphaOperation {
+    objc_setAssociatedObject(self, @selector(alphaOperation), alphaOperation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 #pragma mark - universal methods
@@ -259,7 +275,7 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
 
 /// 列出所有的操作场景
 /// @param operation operation description
-+ (NSDictionary<NSString *,NSNumber *> *)_allHiddenReasonsAndPrioritiesWithOperation:(WBOperationObject *)operation {
++ (NSDictionary<NSString *,NSNumber *> *)_allReasonsAndPrioritiesWithOperation:(WBOperationObject *)operation {
     NSMutableDictionary *mutDict = [NSMutableDictionary dictionary];
     if (!operation) { return [mutDict copy]; }
     NSArray<NSObject<WBVDuplicativeSceneProtocol> *> *sceneObjects = [operation wbv_allSceneObjects];
@@ -337,15 +353,15 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     return [UIView _currentPriorityHighestSceneObjectWithOperation:self.hiddenOperation];
 }
 
+- (NSDictionary<NSString *,NSNumber *> *)wbv_allHiddenReasonsAndPriorities {
+    return [UIView _allReasonsAndPrioritiesWithOperation:self.hiddenOperation];
+}
+
 - (void)wbv_removeAllHiddenReasons {
     BOOL _removeAll = [UIView _operationRemoveAllReasons:self.hiddenOperation];
     if (!_removeAll) { return; }
     //移除所有reason之后恢复原始值
     [self _recoverOriginHiddenStateIfNeed];
-}
-
-- (NSDictionary<NSString *,NSNumber *> *)wbv_allHiddenReasonsAndPriorities {
-    return [UIView _allHiddenReasonsAndPrioritiesWithOperation:self.hiddenOperation];
 }
 
 - (BOOL)wbv_containsHiddenReason:(NSString *)reason {
@@ -387,4 +403,81 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     return YES;
 }
 
+#pragma mark - alpha public methods
+
+- (void)wbv_setAlpha:(CGFloat)alpha reason:(NSString *)reason {
+    [self wbv_setAlpha:alpha reason:reason priority:WBDuplicativeScenePriorityMedium];
+}
+
+- (void)wbv_setAlpha:(CGFloat)alpha reason:(NSString *)reason priority:(NSUInteger)priority {
+    if (!reason) { return; }
+    BOOL _setAlpha = [UIView _operation:self.alphaOperation setUserInfo:[NSNumber numberWithFloat:alpha] reason:reason priority:priority originUserInfo:[NSNumber numberWithFloat:self.alpha]];
+    if (!_setAlpha) { return; }
+    //添加新的场景后，设置成当前最高权重操作的值
+    [self _setAlphaWithPriorityHighScene];
+}
+
+- (void)wbv_removeAlphaReason:(NSString *)reason {
+    if (!reason) { return; }
+    BOOL _removeReason = [UIView _operation:self.alphaOperation removeReason:reason];
+    if (!_removeReason) { return; }
+    //移除某个场景后，设置成当前最高权重操作的值
+    [self _setAlphaWithPriorityHighScene];
+    //移除所有reason之后恢复原始值
+    [self _recoverOriginAlphaStateIfNeed];
+}
+
+- (NSObject<WBVDuplicativeSceneProtocol> *)wbv_currentAlphaPriorityHighestSceneObject {
+    return [UIView _currentPriorityHighestSceneObjectWithOperation:self.alphaOperation];
+}
+
+- (NSDictionary<NSString *,NSNumber *> *)wbv_allAlphaReasonsAndPriorities {
+    return [UIView _allReasonsAndPrioritiesWithOperation:self.alphaOperation];
+}
+
+- (void)wbv_removeAllAlphaReasons {
+    BOOL _removeAll = [UIView _operationRemoveAllReasons:self.alphaOperation];
+    if (!_removeAll) { return; }
+    //移除所有reason之后恢复原始值
+    [self _recoverOriginAlphaStateIfNeed];
+}
+
+- (BOOL)wbv_containsAlphaReason:(NSString *)reason {
+    return [UIView _operation:self.alphaOperation containsReason:reason];
+}
+
+- (NSUInteger)wbv_alphaReasonCount {
+    return [UIView _sceneCountWithOperation:self.alphaOperation];
+}
+
+#pragma mark - hidden private method
+
+- (BOOL)_setAlphaWithPriorityHighScene {
+    NSNumber *userInfo = [UIView _userInfoInHighestPrioritySceneObjectWithOperation:self.alphaOperation];
+    if (![userInfo isKindOfClass:[NSNumber class]]) {
+        return NO;
+    }
+    CGFloat _alpha = [userInfo floatValue];
+    if (ABS(self.alpha - _alpha) > 1E-4) {
+        self.alpha = _alpha;
+    }
+    return YES;
+}
+
+/// 如果所有的场景都被清空了，且记录了原始值，会恢复成原始值
+- (BOOL)_recoverOriginAlphaStateIfNeed {
+    if ([self wbv_alphaReasonCount]) {
+        return NO;
+    }
+    NSNumber *originUserInfo = [UIView _originUserInfoWithOperation:self.alphaOperation];
+    if (![originUserInfo isKindOfClass:[NSNumber class]]) {
+        return NO;
+    }
+     CGFloat _alpha = [originUserInfo floatValue];
+    if (ABS(self.alpha - _alpha) > 1E-4) {
+        self.alpha = _alpha;
+    }
+    self.hiddenOperation.originUserInfo = nil;
+    return YES;
+}
 @end
