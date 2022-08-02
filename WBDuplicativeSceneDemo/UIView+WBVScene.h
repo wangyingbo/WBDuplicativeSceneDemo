@@ -9,6 +9,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+FOUNDATION_EXTERN NSString * const WBDuplicativeSceneReasonDefault;
+
 FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityHigh;
 FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityMedium;
 FOUNDATION_EXTERN NSUInteger const WBDuplicativeScenePriorityLow;
