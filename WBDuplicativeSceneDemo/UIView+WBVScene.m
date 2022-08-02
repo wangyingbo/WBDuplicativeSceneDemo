@@ -8,7 +8,7 @@
 #import "UIView+WBVScene.h"
 #import <objc/runtime.h>
 
-static NSString * const WBDuplicativeSceneReasonDefault = @"WBDuplicativeSceneReasonDefault";
+NSString * const WBDuplicativeSceneReasonDefault = @"WBDuplicativeSceneReasonDefault";
 
 static NSInteger const WBDuplicativeSceneInitialValue = -1;
 NSUInteger const WBDuplicativeScenePriorityHigh = 750;
