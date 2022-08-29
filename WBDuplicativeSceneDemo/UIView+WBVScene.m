@@ -52,12 +52,16 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     }
     __block NSInteger insertIndex = WBDuplicativeSceneInitialValue;
     __block NSInteger replaceIndex = WBDuplicativeSceneInitialValue;
+    __block BOOL shouldSort = NO;
     for (NSUInteger i = 0; i < self.scenesMutArray.count; i++) {
         NSObject<WBVDuplicativeSceneProtocol> *object = [self.scenesMutArray objectAtIndex:i];
         if (![object respondsToSelector:@selector(scene)]) { continue; }
         if (![object respondsToSelector:@selector(priority)]) { continue; }
         if ([sceneObject.scene isEqualToString:object.scene] && replaceIndex == WBDuplicativeSceneInitialValue) {
             replaceIndex = i;
+            if (sceneObject.priority != object.priority) {
+                shouldSort = YES;
+            }
             break;
         }
         if (sceneObject.priority >= object.priority && insertIndex == WBDuplicativeSceneInitialValue) {
@@ -66,7 +70,9 @@ NSUInteger const WBDuplicativeScenePriorityLow = 250;
     }
     if (replaceIndex > WBDuplicativeSceneInitialValue) {
         [self.scenesMutArray replaceObjectAtIndex:replaceIndex withObject:sceneObject];
-        [self _sortArrayDescending];
+        if (shouldSort) {
+            [self _sortArrayDescending];
+        }
     }else if (insertIndex > WBDuplicativeSceneInitialValue) {
         [self.scenesMutArray insertObject:sceneObject atIndex:insertIndex];
     }else {
